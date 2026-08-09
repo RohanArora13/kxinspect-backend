@@ -1,0 +1,26 @@
+[
+  {
+    "id": "BKG-001",
+    "propertyCode": "OVA111",
+    "roomName": "Ensuite",
+    "displayLocation": "Oceanview > Apartment 2 > OVA111",
+    "startDate": "2025-09-06T00:00:00Z",
+    "endDate": "2026-06-27T00:00:00Z"
+  },
+  {
+    "id": "BKG-002",
+    "propertyCode": "OVAK1",
+    "roomName": "Studio",
+    "displayLocation": "Oceanview > Apartment 1 > OVAK1",
+    "startDate": "2024-09-07T00:00:00Z",
+    "endDate": "2025-06-28T00:00:00Z"
+  },
+  {
+    "id": "BKG-003",
+    "propertyCode": "PSA502",
+    "roomName": "Twin Room",
+    "displayLocation": "Parkside > Apartment 5 > PSA502",
+    "startDate": "2026-09-05T00:00:00Z",
+    "endDate": "2027-06-26T00:00:00Z"
+  }
+]

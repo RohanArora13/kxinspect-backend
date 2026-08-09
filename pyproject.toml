@@ -1,0 +1,103 @@
+[project]
+name = "kxinspect-backend-python"
+version = "1.0.0"
+description = "KxInspections mock backend: contract-frozen FastAPI service over a locked JSON store."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "fastapi==0.141.1",
+    "pydantic==2.13.4",
+    "pydantic-settings==2.15.0",
+    "python-multipart==0.0.32",
+    "sse-starlette==3.4.8",
+    "uvicorn==0.52.1",
+]
+
+[project.optional-dependencies]
+dev = []
+
+[dependency-groups]
+dev = [
+    "httpx==0.28.1",
+    "mypy==2.3.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.16.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+src = ["app", "scripts", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "A",
+    "C4",
+    "SIM",
+    "RET",
+    "PTH",
+    "RUF",
+]
+ignore = [
+    "B008",   # FastAPI dependency defaults are call expressions by design.
+    "RUF012", # Pydantic/FastAPI class attributes are not ClassVar annotated.
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Wire field names are lowerCamelCase by contract; renaming them would break the API.
+"app/schemas/*.py" = ["N815"]
+"app/db/models.py" = ["N815"]
+"app/api/v1/endpoints/*.py" = ["N803"]
+"scripts/*.py" = ["T201"]
+"tests/*" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unused_configs = true
+disallow_any_generics = true
+no_implicit_reexport = true
+plugins = []
+
+[[tool.mypy.overrides]]
+module = ["sse_starlette.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "error",
+    # Starlette 1.6 nudges towards httpx2; the pinned TestClient is unaffected.
+    "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
+    "ignore:Using `httpx` with `starlette.testclient`:UserWarning",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+omit = ["app/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "NTF-001",
+    "type": "chargeRaised",
+    "titleKey": "notifications.chargeRaised.title",
+    "bodyKey": "notifications.chargeRaised.body",
+    "chargeId": "CHG-001",
+    "createdAt": "2026-07-15T09:00:05Z",
+    "read": false
+  },
+  {
+    "id": "NTF-002",
+    "type": "chargeDeadlineApproaching",
+    "titleKey": "notifications.chargeDeadlineApproaching.title",
+    "bodyKey": "notifications.chargeDeadlineApproaching.body",
+    "chargeId": "CHG-006",
+    "createdAt": "2026-07-30T09:00:00Z",
+    "read": false
+  },
+  {
+    "id": "NTF-003",
+    "type": "chargeResolved",
+    "titleKey": "notifications.chargeResolved.title",
+    "bodyKey": "notifications.chargeResolved.body",
+    "chargeId": "CHG-004",
+    "createdAt": "2025-05-10T09:05:00Z",
+    "read": true
+  }
+]

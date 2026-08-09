@@ -1,0 +1,26 @@
+[
+  {
+    "id": "RPT-001",
+    "bookingId": "BKG-001",
+    "name": "My Inventory",
+    "summary": "Inventory recorded at check-in with room condition and supplied items.",
+    "status": "completed",
+    "location": "Oceanview > Apartment 2 > OVA111",
+    "completedOn": "2025-09-08T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_001",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "ova111-inventory.pdf"
+  },
+  {
+    "id": "RPT-002",
+    "bookingId": "BKG-002",
+    "name": "My Inventory",
+    "summary": "Inventory recorded at check-in with room condition and supplied items.",
+    "status": "completed",
+    "location": "Oceanview > Apartment 1 > OVAK1",
+    "completedOn": "2024-09-09T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_002",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "ovak1-inventory.pdf"
+  }
+]

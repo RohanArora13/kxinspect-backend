@@ -1,0 +1,88 @@
+[
+  {
+    "id": "INS-001",
+    "bookingId": "BKG-001",
+    "type": "checkout",
+    "status": "completed",
+    "location": "Oceanview > Apartment 2 > OVA111",
+    "roomName": "Ensuite",
+    "date": "2026-06-28T10:00:00Z",
+    "generalNotes": [
+      {
+        "id": "NOTE-001",
+        "recordedAt": "2026-06-28T10:05:00Z",
+        "text": "This room needs to be cleaned please - will re-inspect in 1 week."
+      },
+      {
+        "id": "NOTE-002",
+        "recordedAt": "2026-06-28T10:07:00Z",
+        "text": "Keys returned in full. Meter readings photographed separately."
+      }
+    ],
+    "itemActions": [
+      {
+        "id": "ACT-001",
+        "itemName": "Wardrobe",
+        "notes": "Doors are hanging off.",
+        "thumbnailUrl": "/api/v1/attachments/att_ph_chg001_01_t",
+        "chargeId": "CHG-001",
+        "amountMinor": 2500
+      },
+      {
+        "id": "ACT-002",
+        "itemName": "Skirting board",
+        "notes": "Scuffed paintwork; recorded for information only.",
+        "thumbnailUrl": null,
+        "chargeId": null,
+        "amountMinor": null
+      }
+    ],
+    "itemUpdates": [
+      {
+        "id": "UPD-001",
+        "itemName": "Bed",
+        "conditionNote": "No visible signs of damage."
+      },
+      {
+        "id": "UPD-002",
+        "itemName": "Desk lamp",
+        "conditionNote": "Slight wear and tear."
+      },
+      {
+        "id": "UPD-003",
+        "itemName": "Curtains",
+        "conditionNote": "Clean and undamaged."
+      }
+    ]
+  },
+  {
+    "id": "INS-002",
+    "bookingId": "BKG-002",
+    "type": "preArrival",
+    "status": "completed",
+    "location": "Oceanview > Apartment 1 > OVAK1",
+    "roomName": "Studio",
+    "date": "2024-09-05T09:00:00Z",
+    "generalNotes": [],
+    "itemActions": [],
+    "itemUpdates": [
+      {
+        "id": "UPD-101",
+        "itemName": "Studio kitchenette",
+        "conditionNote": "Ready for arrival."
+      }
+    ]
+  },
+  {
+    "id": "INS-003",
+    "bookingId": "BKG-002",
+    "type": "midStay",
+    "status": "pending",
+    "location": "Oceanview > Apartment 1 > OVAK1",
+    "roomName": "Studio",
+    "date": "2025-02-10T09:00:00Z",
+    "generalNotes": [],
+    "itemActions": [],
+    "itemUpdates": []
+  }
+]

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# Coverage
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Backend runtime state (never committed: it is mutable demo state)
+runtime/*
+!runtime/.gitkeep
+
+# Local scratch output
+tmp/
+.DS_Store

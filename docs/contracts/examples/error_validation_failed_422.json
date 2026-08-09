@@ -1,0 +1,1 @@
+{"response":{"error":{"code":"validation.failed","details":{"errors":[{"field":"id","rule":"string_pattern_mismatch"},{"field":"category","rule":"literal_error"}]},"message":"request failed field validation"},"meta":{"requestId":"<uuid>","schemaVersion":"1","serverTime":"2026-08-01T12:00:00Z","stateEpoch":"<uuid>","storeRevision":1}},"status":422}
