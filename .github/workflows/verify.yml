@@ -1,0 +1,55 @@
+name: Backend verification
+
+on:
+  push:
+    branches: [main, v1]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.14"
+  UV_VERSION: "0.11.14"
+
+jobs:
+  quality-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: python -m pip install --disable-pip-version-check uv==${UV_VERSION}
+      - run: uv sync --locked
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run mypy app
+      - run: uv run python scripts/export_openapi.py --check docs/openapi-v1.json
+      - run: uv run python scripts/verify_fixture_manifest.py
+
+  tests:
+    needs: quality-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: python -m pip install --disable-pip-version-check uv==${UV_VERSION}
+      - run: uv sync --locked
+      - run: uv run pytest -q --cov=app --cov-report=xml --cov-fail-under=85
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: backend-contract-${{ github.sha }}
+          path: |
+            coverage.xml
+            docs/openapi-v1.json
+          if-no-files-found: error
