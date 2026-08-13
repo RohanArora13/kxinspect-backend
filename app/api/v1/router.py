@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import attachments, commands, dev, events, reads
+from app.api.v1.endpoints import attachments, commands, dev, events, reads, reset
 
 
 def build_router(*, include_dev_routes: bool) -> APIRouter:
@@ -14,6 +14,7 @@ def build_router(*, include_dev_routes: bool) -> APIRouter:
     router.include_router(commands.router, tags=["commands"])
     router.include_router(attachments.router, tags=["attachments"])
     router.include_router(events.router, tags=["events"])
+    router.include_router(reset.router, tags=["demo"])
     if include_dev_routes:
         router.include_router(dev.router, tags=["dev"])
     return router

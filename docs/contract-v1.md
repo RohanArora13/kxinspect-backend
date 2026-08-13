@@ -13,9 +13,13 @@ coordinated update of both repositories — not an edit to one side.
 | `schemaVersion` | `1` |
 | `contractVersion` | `1` |
 | API major | `1` (path prefix `/api/v1`) |
-| `seedVersion` | `1` |
+| `seedVersion` | `2` |
 | `referenceNow` | `2026-08-01T12:00:00Z` |
 | Locale / time zone of the demo data | `en-GB` / `Europe/London` |
+
+Every charge carries a non-empty `costBreakdown`. Each item has `label`, optional
+`detail`, and integer `amountMinor` in the charge currency. Item amounts are non-negative
+and must sum exactly to the charge's `amountMinor`; the API rejects mismatched data.
 
 ## 1. Primitives
 
@@ -74,7 +78,7 @@ All enum values are frozen. An unknown value is a protocol error, not a value to
 - **ItemUpdate** — `id`, `itemName`, `conditionNote`.
 - **MaintenanceTask** — `id`, `bookingId`, `category`, `notes`, `location`, `date`, `status`.
 - **Charge** — `id`, `bookingId`, `inspectionId`, `itemName`, `type`, `notes`, `location`,
-  `amountMinor`, `currency`, `status`, `raisedAt`, `gracePeriodDays`, `deadlineAt`,
+  `amountMinor`, `currency`, `costBreakdown[]`, `status`, `raisedAt`, `gracePeriodDays`, `deadlineAt`,
   `photos[]`, `contestReason`, `contestAttachments[]`, `acceptedAt`, `contestedAt`,
   `resolvedAt`, `paidAt`, `acceptanceOrigin`, `version`, `updatedAt`.
 - **Photo** — `id`, `url`, `thumbnailUrl`, `mediaType`, `width`, `height`, `altKey`, `sortOrder`.
@@ -164,8 +168,8 @@ Every JSON response — success or error — is one of:
 ```
 
 Exceptions to the envelope, and the only ones: attachment download returns bytes and
-headers, `GET /api/v1/events` returns `text/event-stream`, and `POST /api/v1/_dev/reset`
-returns an empty `204`.
+headers, `GET /api/v1/events` returns `text/event-stream`, and `POST /api/v1/reset` plus
+`POST /api/v1/_dev/reset` return an empty `204`.
 
 `stateEpoch` changes only on a destructive reset or reseed. `storeRevision` increments on
 every committed snapshot and survives an ordinary restart. `GET /api/v1/sync-snapshot` adds
@@ -199,7 +203,7 @@ mutation. Consequences:
   re-evaluated against current state.
 - A missing key on a command that requires one is `request.idempotency_key_missing` 400; a
   non-UUID key is `request.idempotency_key_invalid` 400.
-- Records live until a dev reset. A production TTL is a documented non-goal.
+- Records live until a reset. A production TTL is a documented non-goal.
 
 ## 8. Endpoints
 
@@ -221,6 +225,7 @@ mutation. Consequences:
 | `GET /api/v1/notifications` | `after`, `unreadOnly` | 200 list | 422 |
 | `POST /api/v1/notifications/{id}/read` | `{expectedStateEpoch}` | 200 notification | 404, 409 |
 | `GET /api/v1/events` | `Last-Event-ID` | SSE stream | 503 |
+| `POST /api/v1/reset` | — | 204 | — |
 | `POST /api/v1/_dev/reset` | — | 204 | 403 |
 | `POST /api/v1/_dev/chaos` | latency and error config | 200 | 403, 422 |
 | `POST /api/v1/_dev/raise-charge` | charge JSON | 201 + SSE | 403, 409, 422 |
@@ -380,6 +385,10 @@ Startup removes stale temp and staging files, refuses corrupt state, and refuses
 references a missing attachment. An incompatible `schemaVersion` or `contractVersion`
 refuses to start. A `seedVersion` mismatch **preserves** the runtime state and refuses
 normal service with an explicit reset instruction — it never silently merges a new seed.
+
+`POST /api/v1/reset` permanently restores the canonical demo seed, closes live streams and
+rotates `stateEpoch` without developer-route configuration or a token. This destructive route
+is intentional for this disposable demo backend and must never be exposed as production.
 
 `uv run python scripts/reset_runtime.py --runtime-root <explicit-path>` performs a
 deliberate reset under the exclusive runtime lock. It refuses relative paths, symlinks,

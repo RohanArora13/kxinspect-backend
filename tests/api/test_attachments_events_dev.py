@@ -180,12 +180,32 @@ def read_events(harness: Harness, *, cursor: str) -> list[dict[str, str]]:
     return collected
 
 
-class TestDevRoutes:
+class TestDevRouteAvailability:
     def test_dev_routes_are_absent_when_disabled(self, no_dev_harness: Harness) -> None:
         response = no_dev_harness.client.post("/api/v1/_dev/reset")
         assert response.status_code == 404
         assert no_dev_harness.client.get("/api/v1/health").json()["data"]["devRoutesEnabled"] is False
 
+
+class TestPermanentDemoReset:
+    def test_reset_is_available_without_dev_routes_or_token(self, no_dev_harness: Harness) -> None:
+        no_dev_harness.client.post(
+            "/api/v1/charges/CHG-001/accept",
+            json={"expectedStateEpoch": no_dev_harness.state_epoch, "expectedVersion": 1},
+            headers=no_dev_harness.command_headers(),
+        )
+        assert no_dev_harness.charge("CHG-001")["status"] == "accepted"
+        before = no_dev_harness.state_epoch
+
+        response = no_dev_harness.client.post("/api/v1/reset")
+
+        assert response.status_code == 204
+        assert response.content == b""
+        assert no_dev_harness.state_epoch != before
+        assert no_dev_harness.charge("CHG-001")["status"] == "outstanding"
+
+
+class TestDevRoutes:
     def test_a_missing_dev_token_is_403(self, harness: Harness) -> None:
         response = harness.client.post("/api/v1/_dev/reset")
         assert response.status_code == 403
@@ -259,7 +279,7 @@ class TestDevRoutes:
                 "itemName": "Bathroom mirror",
                 "type": "replace",
                 "notes": "Cracked during the tenancy.",
-                "location": "Oceanview > Apartment 2 > OVA111",
+                "location": "Cedar Heights > Suite > CDR509",
                 "amountMinor": 4000,
                 "currency": "GBP",
                 "raisedAt": "2026-08-01T12:00:00Z",
@@ -272,6 +292,7 @@ class TestDevRoutes:
         assert charge["status"] == "outstanding"
         assert charge["deadlineAt"] == "2026-08-31T12:00:00Z"
         assert charge["version"] == 1
+        assert sum(item["amountMinor"] for item in charge["costBreakdown"]) == 4000
 
         feed = harness.client.get("/api/v1/notifications?unreadOnly=true").json()["data"]
         assert any(row["chargeId"] == "CHG-900" for row in feed)
@@ -282,7 +303,7 @@ class TestDevRoutes:
             "bookingId": "BKG-001",
             "itemName": "Duplicate",
             "type": "repair",
-            "location": "Oceanview > Apartment 2 > OVA111",
+            "location": "Maple Court > Apartment 1 > MPL205",
             "amountMinor": 100,
             "raisedAt": "2026-08-01T12:00:00Z",
         }

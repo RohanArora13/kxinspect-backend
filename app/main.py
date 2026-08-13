@@ -12,13 +12,14 @@ import contextlib
 import logging
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
+from time import perf_counter
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from starlette.types import ASGIApp, Receive, Scope, Send
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app.api.deps import AppContext, meta_for
 from app.api.v1.router import build_router
@@ -39,7 +40,10 @@ from app.services.attachment_service import cleanup_staging
 from app.services.charge_service import ChargeService
 from app.services.event_bus import EventBroker
 
-logger = logging.getLogger("kxinspect")
+# Uvicorn owns this logger's terminal handler and log level. Using it keeps application
+# request logs visible from the documented ``uvicorn`` command without configuring a
+# duplicate handler when test clients build several applications in one process.
+logger = logging.getLogger("uvicorn.error")
 
 #: Hard ceiling applied before Starlette's multipart parser sees a single byte.
 MAX_REQUEST_BYTES = MAX_ATTACHMENT_TOTAL_BYTES + 1 * 1024 * 1024
@@ -48,7 +52,7 @@ CORS_ALLOWED_HEADERS = ("Content-Type", "Idempotency-Key", "Last-Event-ID", "X-D
 CORS_ALLOWED_METHODS = ("GET", "POST", "OPTIONS")
 
 #: Paths that manage their own barrier lease or must stay reachable during a reset.
-_SELF_MANAGED_PATHS = frozenset({"/api/v1/events", "/api/v1/_dev/reset"})
+_SELF_MANAGED_PATHS = frozenset({"/api/v1/events", "/api/v1/reset", "/api/v1/_dev/reset"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,6 +125,55 @@ class MaxBodySizeMiddleware:
         await send({"type": "http.response.body", "body": body})
 
 
+class ApiRequestLoggingMiddleware:
+    """Emit one terminal-safe access line when every HTTP response starts."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self._app(scope, receive, send)
+            return
+
+        context = getattr(getattr(scope.get("app"), "state", None), "context", None)
+        state = scope.get("state")
+        if isinstance(context, AppContext) and isinstance(state, dict) and "request_id" not in state:
+            state["request_id"] = context.id_generator.next_uuid()
+
+        started_at = perf_counter()
+        response_started = False
+
+        async def logging_send(message: Message) -> None:
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+                self._log(scope, int(message["status"]), started_at)
+            await send(message)
+
+        try:
+            await self._app(scope, receive, logging_send)
+        except Exception:
+            # ServerErrorMiddleware renders the 500 outside this middleware, so record
+            # it here before allowing FastAPI's normal error handling to continue.
+            if not response_started:
+                self._log(scope, 500, started_at)
+            raise
+
+    @staticmethod
+    def _log(scope: Scope, status_code: int, started_at: float) -> None:
+        state = scope.get("state", {})
+        request_id = state.get("request_id", "") if isinstance(state, dict) else ""
+        logger.info(
+            "api call method=%s path=%s status=%s duration_ms=%.1f request_id=%s",
+            scope["method"],
+            scope["path"],
+            status_code,
+            (perf_counter() - started_at) * 1000,
+            request_id,
+        )
+
+
 def build_app(
     settings: Settings,
     store: JsonStore,
@@ -163,6 +216,7 @@ def build_app(
         description=(
             "Contract v1 mock service for the KxInspections assignment. Demo data only: "
             "there is no authentication, no payment provider and no multi-process storage. "
+            "POST /api/v1/reset intentionally restores original demo data without credentials. "
             "Never expose this service as a production system."
         ),
         openapi_url="/openapi.json",
@@ -191,7 +245,8 @@ def _install_middleware(app: FastAPI, settings: Settings) -> None:
     @app.middleware("http")
     async def request_context(request: Request, call_next: Callable[[Request], Awaitable[Any]]) -> Any:
         context: AppContext = request.app.state.context
-        request.state.request_id = context.id_generator.next_uuid()
+        if not hasattr(request.state, "request_id"):
+            request.state.request_id = context.id_generator.next_uuid()
         try:
             # Middleware sits outside Starlette's exception middleware, so an ApiError
             # raised here has to be rendered into the envelope by hand.
@@ -212,6 +267,8 @@ def _install_middleware(app: FastAPI, settings: Settings) -> None:
         allow_headers=list(CORS_ALLOWED_HEADERS),
         expose_headers=["Content-Range", "Accept-Ranges"],
     )
+    # Install last so this wraps CORS and size-limit middleware too.
+    app.add_middleware(ApiRequestLoggingMiddleware)
 
 
 def _install_exception_handlers(app: FastAPI) -> None:

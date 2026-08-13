@@ -16,6 +16,7 @@ from app.domain.charge_state import ChargeEvent
 from app.schemas.charge import Charge
 from app.schemas.common import Envelope
 from app.schemas.event import ChaosRequest, ChaosState, RaiseChargeRequest, ResolveChargeRequest
+from app.services.demo_reset import reset_demo_state
 
 router = APIRouter()
 
@@ -23,9 +24,7 @@ router = APIRouter()
 @router.post("/_dev/reset", status_code=204, summary="Destructive reseed with a new state epoch")
 async def reset(request: Request) -> Response:
     context = require_dev_access(request)
-    await context.broker.close_all()
-    async with context.store.barrier.exclusive():
-        await context.store.reset()
+    await reset_demo_state(store=context.store, broker=context.broker)
     return Response(status_code=204)
 
 

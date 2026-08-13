@@ -14,7 +14,7 @@ app ships.
 |---|---|
 | Contract v1 (schemas, enums, errors, envelope, lifecycle, deadlines) | frozen at G-01 |
 | Fixture bundle and exporter | implemented, byte-stable, verified |
-| FastAPI reads, commands, idempotency, attachments, SSE, dev routes | implemented, tested |
+| FastAPI reads, commands, idempotency, attachments, SSE, permanent demo reset, dev routes | implemented, tested |
 | Static checks (`ruff`, `mypy --strict`) and tests | passing locally |
 | CI workflow | owned by a later work package; not present here |
 | Hosted or device runtime evidence | out of scope for this repository |
@@ -29,8 +29,11 @@ app ships.
 
 ```bash
 uv sync --locked
-uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000
+uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --log-level info --no-access-log
 ```
+
+Terminal output includes one `api call` line per request with method, path, status,
+latency and request ID. Request bodies, headers and query values are never logged.
 
 Then:
 
@@ -71,13 +74,16 @@ Every setting is read once at startup and validated. All are prefixed `KX_`.
 | `KX_GRACE_PERIOD_DAYS` | `30` | Seeds `deadlineAt` for dev-raised charges |
 | `KX_DEMO_NOW` | *(unset)* | Anchors the service to a fixed instant for demos |
 
+`POST /api/v1/reset` is permanently available with no token because this is an intentionally
+disposable demo backend. It closes live event streams, discards runtime changes and restores
+the canonical seed. Never expose this service outside its demo environment.
+
 Dev routes, when enabled, still require a constant-time `X-Dev-Token` match on every call —
 loopback included.
 
 ```bash
-KX_ENABLE_DEV_ROUTES=true KX_DEV_TOKEN=local-demo \
-  uv run uvicorn app.main:create_app --factory
-curl -s -X POST http://127.0.0.1:8000/api/v1/_dev/reset -H 'X-Dev-Token: local-demo' -i
+uv run uvicorn app.main:create_app --factory --log-level info --no-access-log
+curl -s -X POST http://127.0.0.1:8000/api/v1/reset -i
 ```
 
 ## Verify it
