@@ -51,6 +51,7 @@ from app.domain.charge_state import (
     TransitionAccepted,
     transition,
 )
+from app.domain.cost_breakdown import default_cost_breakdown
 from app.domain.deadline import deadline_for, is_expired
 
 TASK_CATEGORIES: Final[tuple[str, ...]] = (
@@ -561,6 +562,9 @@ class ChargeService:
             grace = int(charge.get("gracePeriodDays", self._settings.grace_period_days))
             stored: JsonDict = {
                 **charge,
+                "costBreakdown": charge.get(
+                    "costBreakdown", default_cost_breakdown(int(charge["amountMinor"]))
+                ),
                 "gracePeriodDays": grace,
                 "deadlineAt": format_instant(deadline_for(raised_at, grace)),
                 "status": ChargeStatus.OUTSTANDING.value,

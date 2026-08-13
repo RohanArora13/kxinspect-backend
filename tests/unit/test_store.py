@@ -66,6 +66,26 @@ class TestLifecycle:
         finally:
             second.close()
 
+    def test_second_boot_backfills_legacy_cost_breakdowns_without_reseed(self, tmp_path: Path) -> None:
+        first = open_store(tmp_path)
+        epoch = first.state_epoch
+        first.close()
+        path = tmp_path / "runtime" / "state.json"
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for charge in payload["entities"]["charges"]:
+            charge.pop("costBreakdown")
+        path.write_text(json.dumps(payload), encoding="utf-8")
+
+        second = open_store(tmp_path)
+        try:
+            restored = json.loads(path.read_text(encoding="utf-8"))
+            assert second.state_epoch == epoch
+            assert all(charge["costBreakdown"] for charge in restored["entities"]["charges"])
+            wardrobe = next(charge for charge in restored["entities"]["charges"] if charge["id"] == "CHG-001")
+            assert wardrobe["costBreakdown"][0]["label"] == "Replacement hinge set"
+        finally:
+            second.close()
+
     def test_a_second_process_cannot_open_the_same_runtime(self, tmp_path: Path) -> None:
         first = open_store(tmp_path)
         try:

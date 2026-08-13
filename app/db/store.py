@@ -50,6 +50,7 @@ from app.db.models import (
     baseline_cursor,
     event_id,
 )
+from app.domain.cost_breakdown import default_cost_breakdown
 
 
 class IncompatibleRuntimeStateError(RuntimeError):
@@ -333,7 +334,7 @@ class JsonStore:
             not isinstance(entities.get(key), list) for key in ENTITY_KEYS
         ):
             raise CorruptRuntimeStateError("runtime state entities are malformed")
-        return StoreSnapshot(
+        snapshot = StoreSnapshot(
             schemaVersion=raw["schemaVersion"],
             contractVersion=raw["contractVersion"],
             seedVersion=raw["seedVersion"],
@@ -353,6 +354,30 @@ class JsonStore:
             events=list(raw.get("events", [])),
             idempotency=dict(raw.get("idempotency", {})),
         )
+        if self._backfill_cost_breakdowns(snapshot):
+            self._persist(snapshot)
+        return snapshot
+
+    def _backfill_cost_breakdowns(self, snapshot: StoreSnapshot) -> bool:
+        """Upgrade persisted pre-breakdown demo state without discarding mutations."""
+        seed_by_id = {row["id"]: row for row in self._seed_entities()["charges"]}
+        changed = False
+        for charge in entity_list(snapshot, "charges"):
+            if isinstance(charge.get("costBreakdown"), list) and charge["costBreakdown"]:
+                continue
+            seed = seed_by_id.get(charge["id"])
+            if (
+                seed is not None
+                and seed.get("amountMinor") == charge.get("amountMinor")
+                and seed.get("currency") == charge.get("currency")
+                and isinstance(seed.get("costBreakdown"), list)
+                and seed["costBreakdown"]
+            ):
+                charge["costBreakdown"] = copy.deepcopy(seed["costBreakdown"])
+            else:
+                charge["costBreakdown"] = default_cost_breakdown(int(charge["amountMinor"]))
+            changed = True
+        return changed
 
     def _verify_attachments(self, snapshot: StoreSnapshot) -> None:
         missing = [

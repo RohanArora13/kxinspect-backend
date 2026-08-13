@@ -119,6 +119,20 @@ def validate(seed: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
         expected_deadline = deadline_for(raised, charge["gracePeriodDays"])
         if format_instant(expected_deadline) != charge["deadlineAt"]:
             problems.append(f"charges/{charge['id']}: deadlineAt is not raisedAt + gracePeriodDays")
+        breakdown = charge.get("costBreakdown")
+        if not isinstance(breakdown, list) or not breakdown:
+            problems.append(f"charges/{charge['id']}: costBreakdown must not be empty")
+        elif any(
+            not isinstance(item, dict)
+            or not isinstance(item.get("label"), str)
+            or not item["label"]
+            or not isinstance(item.get("amountMinor"), int)
+            or item["amountMinor"] < 0
+            for item in breakdown
+        ):
+            problems.append(f"charges/{charge['id']}: costBreakdown has an invalid item")
+        elif sum(item["amountMinor"] for item in breakdown) != charge["amountMinor"]:
+            problems.append(f"charges/{charge['id']}: costBreakdown does not equal amountMinor")
         problems.extend(_status_invariants(charge))
 
     for inspection in seed["inspections"]:

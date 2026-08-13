@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from app.schemas.booking import Booking, InventoryReport
 from app.schemas.common import (
@@ -43,6 +43,14 @@ class ContestAttachment(StrictModel):
     thumbnailUrl: str | None
 
 
+class CostBreakdownItem(StrictModel):
+    """One auditable component of a charge total, in charge currency."""
+
+    label: NonEmptyText
+    detail: NonEmptyText | None
+    amountMinor: int = Field(ge=0)
+
+
 class Charge(StrictModel):
     id: EntityId
     bookingId: EntityId
@@ -54,6 +62,7 @@ class Charge(StrictModel):
     #: Integer minor units. Floats are rejected by the strict model.
     amountMinor: int = Field(ge=0)
     currency: CurrencyCode
+    costBreakdown: list[CostBreakdownItem] = Field(min_length=1)
     status: ChargeStatusLiteral
     raisedAt: IsoUtcInstant
     gracePeriodDays: int = Field(ge=0)
@@ -68,6 +77,15 @@ class Charge(StrictModel):
     acceptanceOrigin: AcceptanceOriginLiteral | None
     version: int = Field(ge=1)
     updatedAt: IsoUtcInstant
+
+    @model_validator(mode="after")
+    def cost_breakdown_matches_total(self) -> Self:
+        breakdown_total = sum(item.amountMinor for item in self.costBreakdown)
+        if breakdown_total != self.amountMinor:
+            raise ValueError(
+                f"costBreakdown totals {breakdown_total}, expected amountMinor {self.amountMinor}"
+            )
+        return self
 
 
 class AppNotification(StrictModel):
