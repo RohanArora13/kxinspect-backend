@@ -29,7 +29,7 @@ app ships.
 
 ```bash
 uv sync --locked
-uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 --log-level info --no-access-log
+uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8181 --log-level info --no-access-log
 ```
 
 Terminal output includes one `api call` line per request with method, path, status,
@@ -38,17 +38,17 @@ latency and request ID. Request bodies, headers and query values are never logge
 Then:
 
 ```bash
-curl -s http://127.0.0.1:8000/api/v1/health | python -m json.tool
-curl -s http://127.0.0.1:8000/api/v1/bookings/BKG-001/hub | python -m json.tool
+curl -s http://127.0.0.1:8181/api/v1/health | python -m json.tool
+curl -s http://127.0.0.1:8181/api/v1/bookings/BKG-001/hub | python -m json.tool
 ```
 
-Interactive docs are at <http://127.0.0.1:8000/docs>.
+Interactive docs are at <http://127.0.0.1:8181/docs>.
 
 ### A complete Accept, from a cold start
 
 ```bash
-EPOCH=$(curl -s http://127.0.0.1:8000/api/v1/charges/CHG-001 | python -c 'import json,sys;print(json.load(sys.stdin)["meta"]["stateEpoch"])')
-curl -s -X POST http://127.0.0.1:8000/api/v1/charges/CHG-001/accept \
+EPOCH=$(curl -s http://127.0.0.1:8181/api/v1/charges/CHG-001 | python -c 'import json,sys;print(json.load(sys.stdin)["meta"]["stateEpoch"])')
+curl -s -X POST http://127.0.0.1:8181/api/v1/charges/CHG-001/accept \
   -H 'Content-Type: application/json' \
   -H "Idempotency-Key: $(uuidgen)" \
   -d "{\"expectedStateEpoch\":\"$EPOCH\",\"expectedVersion\":1}" | python -m json.tool
@@ -65,7 +65,7 @@ Every setting is read once at startup and validated. All are prefixed `KX_`.
 | Variable | Default | Notes |
 |---|---|---|
 | `KX_HOST` | `127.0.0.1` | Loopback by default, on purpose |
-| `KX_PORT` | `8000` | |
+| `KX_PORT` | `8181` | |
 | `KX_WORKERS` | `1` | Any other value is rejected at startup |
 | `KX_RUNTIME_ROOT` | `runtime` | State, uploads, lock and marker live here |
 | `KX_ENABLE_DEV_ROUTES` | `false` | `/_dev/*` routes are not even bound when false |
@@ -83,7 +83,7 @@ loopback included.
 
 ```bash
 uv run uvicorn app.main:create_app --factory --log-level info --no-access-log
-curl -s -X POST http://127.0.0.1:8000/api/v1/reset -i
+curl -s -X POST http://127.0.0.1:8181/api/v1/reset -i
 ```
 
 ## Verify it
