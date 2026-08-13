@@ -463,7 +463,7 @@ class TestCreateTask:
             "bookingId": "BKG-001",
             "category": "furniture",
             "notes": "The wardrobe door hinge has come away from the frame.",
-            "location": "Oceanview > Apartment 2 > OVA111",
+            "location": "Willow Gardens > Apartment 2 > WIL119",
             "date": "2026-08-01T12:00:00Z",
             "expectedStateEpoch": harness.state_epoch,
         }

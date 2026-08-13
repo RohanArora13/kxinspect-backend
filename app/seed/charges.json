@@ -6,9 +6,26 @@
     "itemName": "Wardrobe",
     "type": "replace",
     "notes": "Doors are hanging off.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Maple Court > Apartment 1 > MPL205",
     "amountMinor": 2500,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Replacement hinge set",
+        "detail": "Two heavy-duty hinges and fixings",
+        "amountMinor": 1050
+      },
+      {
+        "label": "Technician labour",
+        "detail": "Removal, alignment and fitting",
+        "amountMinor": 1033
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 417
+      }
+    ],
     "status": "outstanding",
     "raisedAt": "2026-07-15T09:00:00Z",
     "gracePeriodDays": 30,
@@ -55,6 +72,23 @@
     "location": "Oceanview > Apartment 1 > OVAK1",
     "amountMinor": 1800,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Replacement caster",
+        "detail": "Matching chair wheel and stem",
+        "amountMinor": 600
+      },
+      {
+        "label": "Technician labour",
+        "detail": "Assessment and fitting",
+        "amountMinor": 900
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 300
+      }
+    ],
     "status": "accepted",
     "raisedAt": "2025-07-01T09:00:00Z",
     "gracePeriodDays": 30,
@@ -80,6 +114,18 @@
     "location": "Oceanview > Apartment 1 > OVAK1",
     "amountMinor": 3200,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Professional cleaning",
+        "detail": "Targeted carpet stain treatment",
+        "amountMinor": 2667
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 533
+      }
+    ],
     "status": "contested",
     "raisedAt": "2025-06-01T09:00:00Z",
     "gracePeriodDays": 30,
@@ -115,6 +161,23 @@
     "location": "Oceanview > Apartment 1 > OVAK1",
     "amountMinor": 1200,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Replacement slats",
+        "detail": "Matching blind slats and clips",
+        "amountMinor": 600
+      },
+      {
+        "label": "Technician labour",
+        "detail": "Removal and fitting",
+        "amountMinor": 400
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 200
+      }
+    ],
     "status": "resolved",
     "raisedAt": "2025-05-01T09:00:00Z",
     "gracePeriodDays": 30,
@@ -140,6 +203,23 @@
     "location": "Oceanview > Apartment 1 > OVAK1",
     "amountMinor": 1000,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Replacement key",
+        "detail": "Key blank and cutting",
+        "amountMinor": 667
+      },
+      {
+        "label": "Administration",
+        "detail": "Key registration and handling",
+        "amountMinor": 166
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 167
+      }
+    ],
     "status": "paid",
     "raisedAt": "2025-04-01T09:00:00Z",
     "gracePeriodDays": 30,
@@ -162,9 +242,26 @@
     "itemName": "Mattress",
     "type": "clean",
     "notes": "Deep clean after staining.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Riverside > Studio 2 > RIV408",
     "amountMinor": 4500,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Deep-clean service",
+        "detail": "Mattress extraction cleaning",
+        "amountMinor": 3250
+      },
+      {
+        "label": "Stain treatment",
+        "detail": "Specialist cleaning solution",
+        "amountMinor": 500
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 750
+      }
+    ],
     "status": "outstanding",
     "raisedAt": "2026-07-02T12:00:00Z",
     "gracePeriodDays": 30,
@@ -198,9 +295,26 @@
     "itemName": "Shower curtain",
     "type": "replace",
     "notes": "Torn beyond reuse.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Cedar Heights > Suite > CDR509",
     "amountMinor": 1500,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Replacement curtain",
+        "detail": "Water-resistant shower curtain",
+        "amountMinor": 950
+      },
+      {
+        "label": "Fitting",
+        "detail": "Removal and installation",
+        "amountMinor": 300
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 250
+      }
+    ],
     "status": "accepted",
     "raisedAt": "2026-06-20T09:00:00Z",
     "gracePeriodDays": 30,
@@ -223,9 +337,26 @@
     "itemName": "Study chair",
     "type": "repair",
     "notes": "Gas lift no longer holds height.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Skyline Tower > Penthouse > SKY617",
     "amountMinor": 2200,
     "currency": "EUR",
+    "costBreakdown": [
+      {
+        "label": "Gas-lift mechanism",
+        "detail": "Replacement chair component",
+        "amountMinor": 1000
+      },
+      {
+        "label": "Technician labour",
+        "detail": "Assessment and fitting",
+        "amountMinor": 833
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 367
+      }
+    ],
     "status": "accepted",
     "raisedAt": "2026-06-22T09:00:00Z",
     "gracePeriodDays": 30,
@@ -251,6 +382,23 @@
     "location": "Oceanview > Apartment 1 > OVAK1",
     "amountMinor": 900,
     "currency": "GBP",
+    "costBreakdown": [
+      {
+        "label": "Drawer runner",
+        "detail": "Replacement runner and fixings",
+        "amountMinor": 400
+      },
+      {
+        "label": "Technician labour",
+        "detail": "Removal, alignment and fitting",
+        "amountMinor": 350
+      },
+      {
+        "label": "VAT",
+        "detail": "Tax included in total",
+        "amountMinor": 150
+      }
+    ],
     "status": "accepted",
     "raisedAt": "2025-03-01T09:00:00Z",
     "gracePeriodDays": 30,

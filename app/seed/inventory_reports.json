@@ -5,7 +5,7 @@
     "name": "My Inventory",
     "summary": "Inventory recorded at check-in with room condition and supplied items.",
     "status": "completed",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Kingsley House > Studio 1 > KNG306",
     "completedOn": "2025-09-08T00:00:00Z",
     "reportUrl": "/api/v1/attachments/att_rpt_001",
     "downloadMediaType": "application/pdf",
@@ -22,5 +22,53 @@
     "reportUrl": "/api/v1/attachments/att_rpt_002",
     "downloadMediaType": "application/pdf",
     "downloadFileName": "ovak1-inventory.pdf"
+  },
+  {
+    "id": "RPT-003",
+    "bookingId": "BKG-001",
+    "name": "Bedroom inventory",
+    "summary": "Bed, wardrobe, desk and lighting condition recorded at check-in.",
+    "status": "completed",
+    "location": "Harbour House > Studio 1 > HBR312",
+    "completedOn": "2025-09-08T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_001",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "hbr312-bedroom-inventory.pdf"
+  },
+  {
+    "id": "RPT-004",
+    "bookingId": "BKG-001",
+    "name": "Kitchen inventory",
+    "summary": "Appliances, cupboards, worktops and supplied kitchenware checked at move-in.",
+    "status": "completed",
+    "location": "Harbour House > Studio 1 > HBR312",
+    "completedOn": "2025-09-08T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_001",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "hbr312-kitchen-inventory.pdf"
+  },
+  {
+    "id": "RPT-005",
+    "bookingId": "BKG-001",
+    "name": "Bathroom inventory",
+    "summary": "Bathroom fittings, extractor, mirrors and supplied accessories recorded at check-in.",
+    "status": "completed",
+    "location": "Harbour House > Studio 1 > HBR312",
+    "completedOn": "2025-09-08T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_001",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "hbr312-bathroom-inventory.pdf"
+  },
+  {
+    "id": "RPT-006",
+    "bookingId": "BKG-001",
+    "name": "Safety and utilities inventory",
+    "summary": "Meter readings, smoke alarm, keys and safety equipment documented at check-in.",
+    "status": "completed",
+    "location": "Harbour House > Studio 1 > HBR312",
+    "completedOn": "2025-09-08T00:00:00Z",
+    "reportUrl": "/api/v1/attachments/att_rpt_001",
+    "downloadMediaType": "application/pdf",
+    "downloadFileName": "hbr312-safety-utilities-inventory.pdf"
   }
 ]

@@ -4,7 +4,7 @@
     "bookingId": "BKG-001",
     "category": "furniture",
     "notes": "Wardrobe doors are hanging off.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "Willow Gardens > Apartment 2 > WIL119",
     "date": "2026-06-28T12:00:00Z",
     "status": "new"
   },
@@ -13,7 +13,7 @@
     "bookingId": "BKG-001",
     "category": "appliance",
     "notes": "Kitchen extractor fan rattles at high speed.",
-    "location": "Oceanview > Apartment 2 > OVA111",
+    "location": "The Foundry > Studio 2 > FND404",
     "date": "2026-07-02T12:00:00Z",
     "status": "inProgress"
   },

@@ -63,6 +63,14 @@ class TestHub:
     def test_hub_projects_only_the_requested_booking(self, harness: Harness) -> None:
         data = harness.client.get("/api/v1/bookings/BKG-001/hub").json()["data"]
         assert data["booking"]["id"] == "BKG-001"
+        assert [report["id"] for report in data["inventoryReports"]] == [
+            "RPT-001",
+            "RPT-003",
+            "RPT-004",
+            "RPT-005",
+            "RPT-006",
+        ]
+        assert {row["bookingId"] for row in data["inventoryReports"]} == {"BKG-001"}
         assert {row["bookingId"] for row in data["charges"]} == {"BKG-001"}
         assert {row["bookingId"] for row in data["inspections"]} == {"BKG-001"}
         assert data["generatedAt"] == REFERENCE_NOW
@@ -108,6 +116,14 @@ class TestDeadlineReconciliationOnRead:
 
 
 class TestChargeFilters:
+    def test_each_charge_has_an_exact_nonempty_cost_breakdown(self, harness: Harness) -> None:
+        rows = harness.client.get("/api/v1/charges").json()["data"]
+        assert rows
+        for row in rows:
+            breakdown = row["costBreakdown"]
+            assert breakdown
+            assert sum(item["amountMinor"] for item in breakdown) == row["amountMinor"]
+
     def test_booking_filter(self, harness: Harness) -> None:
         rows = harness.client.get("/api/v1/charges?bookingId=BKG-002").json()["data"]
         assert {row["bookingId"] for row in rows} == {"BKG-002"}

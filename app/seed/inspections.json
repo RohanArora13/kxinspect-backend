@@ -4,8 +4,8 @@
     "bookingId": "BKG-001",
     "type": "checkout",
     "status": "completed",
-    "location": "Oceanview > Apartment 2 > OVA111",
-    "roomName": "Ensuite",
+    "location": "Parkside > Apartment 1 > PRK214",
+    "roomName": "Apartment",
     "date": "2026-06-28T10:00:00Z",
     "generalNotes": [
       {

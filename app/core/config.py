@@ -17,7 +17,7 @@ from app.core.clock import parse_instant
 SCHEMA_VERSION: Final[str] = "1"
 CONTRACT_VERSION: Final[str] = "1"
 API_MAJOR: Final[str] = "1"
-SEED_VERSION: Final[str] = "1"
+SEED_VERSION: Final[str] = "2"
 
 #: Frozen demo anchor. Fixture dates are authored relative to this instant so that
 #: screenshot-era data cannot silently expire under a developer's wall clock.
