@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    image: kxinspect-backend:latest
+    container_name: kxinspect-backend
+    ports:
+      - "127.0.0.1:8181:8181"
+    volumes:
+      - runtime_data:/app/runtime
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8181/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+volumes:
+  runtime_data:
